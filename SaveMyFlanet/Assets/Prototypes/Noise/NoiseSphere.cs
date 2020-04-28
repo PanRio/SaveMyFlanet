@@ -5,12 +5,14 @@ using UnityEngine;
 public class NoiseSphere : MonoBehaviour
 {
     public float scale = 16f;
+    public float contrast = 2f;
 
     public int numOctaves = 8;
     public float valleyPersistence = 0.5f;
     public float mountainPersistence = 0.9f;
     
-    public float groundLevel = 0.5f;
+    public float seaLevel = 0.5f;
+    public float maxHeight = 0.5f;
 
     private Mesh mesh;
     private List<Vector3> baseVertices;
@@ -38,7 +40,11 @@ public class NoiseSphere : MonoBehaviour
                 numOctaves: numOctaves,
                 persistence: mountainPersistence
             ),
-            modulationNoise: new SimplexNoise()
+            modulationNoise: new ContrastNoise
+            (
+                slave: new SimplexNoise(),
+                contrast: contrast
+            )
         );
         
         Vector3[] vertices = new Vector3[baseVertices.Count];
@@ -48,7 +54,7 @@ public class NoiseSphere : MonoBehaviour
             var vertexPos = baseVertices[i];
             var samplePos = vertexPos * scale;
             var sampled = noise.Sample(samplePos);
-            var height = sampled * (1f - groundLevel) + groundLevel;
+            var height = Mathf.Max(sampled - seaLevel, 0f) * maxHeight + seaLevel;
 
             vertices[i] = vertexPos * height;
         }
