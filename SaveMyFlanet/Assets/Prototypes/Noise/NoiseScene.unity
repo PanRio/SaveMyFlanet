@@ -328,9 +328,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   pixWidth: 256
   pixHeight: 256
-  xOrg: 0
-  yOrg: 0
-  scale: 1
+  scale: 16
+  swirliness: 0.5
 --- !u!212 &1738054726
 SpriteRenderer:
   m_ObjectHideFlags: 0

@@ -1,29 +1,21 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-// Create a texture and fill it with Perlin noise.
-// Try varying the xOrg, yOrg and scale values in the inspector
-// while in Play mode to see the effect they have on the noise.
-
 public class NoiseDemo : MonoBehaviour
 {
     // Width and height of the texture in pixels.
     public int pixWidth = 256;
     public int pixHeight = 256;
 
-    // The origin of the sampled area in the plane.
-    public float xOrg;
-    public float yOrg;
-
     // The number of cycles of the basic noise pattern that are repeated
     // over the width and height of the texture.
-    public float scale = 1.0F;
+    public float scale = 16f;
+    public float swirliness = 0.5f;
+
 
     private Texture2D noiseTex;
     private Color[] pix;
     private Renderer rend;
-
-    private Noise noise = new ValueNoise(new Vector3Int(64, 64, 64));
 
     void Start()
     {
@@ -37,21 +29,16 @@ public class NoiseDemo : MonoBehaviour
 
     void CalcNoise()
     {
-        // For each pixel in the texture...
-        float y = 0.0F;
-
-        while (y < noiseTex.height)
+        var noise = new SwirlNoise(swirliness, seed: 0);
+        for (var y = 0; y < noiseTex.height; y++)
         {
-            float x = 0.0F;
-            while (x < noiseTex.width)
+            for (var x = 0;  x < noiseTex.width; x++)
             {
-                float xCoord = xOrg + x / noiseTex.width * scale;
-                float yCoord = yOrg + y / noiseTex.height * scale;
+                float xCoord = (float)x / noiseTex.width * scale;
+                float yCoord = (float)y / noiseTex.height * scale;
                 float sample = noise.Sample(new Vector3(xCoord, yCoord));
-                pix[(int)y * noiseTex.width + (int)x] = new Color(sample, sample, sample);
-                x++;
+                pix[y * noiseTex.width + x] = new Color(sample, sample, sample);
             }
-            y++;
         }
 
         // Copy the pixel data to the texture and load it into the GPU.

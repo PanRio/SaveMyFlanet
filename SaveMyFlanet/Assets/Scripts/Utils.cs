@@ -27,14 +27,15 @@ public static class Utils
         return new Vector3(Mathf.Abs(v.x), Mathf.Abs(v.y), Mathf.Abs(v.z));
     }
 
-    public static float RandFloat(int seed, int resolution = 256)
+    public static float RandFloat(int seed)
     {
-        return (float)Mod(RandInt(seed), resolution) / resolution;
+        var rng = new System.Random(seed);
+        return (float)rng.NextDouble();
     }
 
     public static int RandInt(int seed)
     {
-        const int a = 13 * 13 * 13 * 13 * 13;
-        return (seed * a) ^ (seed << 13) ^ (seed >> 2);
+        var rng = new System.Random(seed);
+        return rng.Next();
     }
 }
