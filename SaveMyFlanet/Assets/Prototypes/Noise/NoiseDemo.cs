@@ -34,44 +34,21 @@ public class NoiseDemo : MonoBehaviour
 
     void CalcNoise()
     {
-        var noise = new OctaveNoise
+        var noise = new ModulatedNoise
         (
-            slave: new MountainNoise
+            startNoise: new OctaveNoise
             (
-                decisionNoise: new SimplexNoise(seed: 0),
-                valleyNoise: new ScaledNoise
-                (
-                    slave: new RidgeNoise
-                    (
-                        new SwirlNoise
-                        (
-                            valueNoise: new SimplexNoise(seed: 1),
-                            deltaNoise: new SimplexNoise(seed: 2),
-                            swirliness: 0.5f
-                        )
-                    ),
-                    scale: 2f
-                ),
-                peakNoise: new InverseNoise
-                (
-                    new ScaledNoise
-                    (
-                        slave: new RidgeNoise
-                        (
-                            new SwirlNoise
-                            (
-                                valueNoise: new SimplexNoise(seed: 3),
-                                deltaNoise: new SimplexNoise(seed: 4),
-                                swirliness: 0.5f
-                            )
-                        ),
-                        scale: 4f
-                    )
-                ),
-                border: border
+                slave: new SimplexNoise(),
+                numOctaves: 8,
+                persistence: 0.5f
             ),
-            numOctaves: 4,
-            persistence: 0.5f
+            endNoise: new OctaveNoise
+            (
+                slave: new RidgeNoise(),
+                numOctaves: 8,
+                persistence: 0.9f
+            ),
+            modulationNoise: new SimplexNoise()
         );
         for (var y = 0; y < noiseTex.height; y++)
         {

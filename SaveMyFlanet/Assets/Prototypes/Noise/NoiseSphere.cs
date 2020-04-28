@@ -24,21 +24,21 @@ public class NoiseSphere : MonoBehaviour
     [EasyButtons.Button]
     void UpdateMesh()
     {
-        var noise = new MountainNoise
+        var noise = new ModulatedNoise
         (
-            decisionNoise: new SimplexNoise(),
-            valleyNoise: new OctaveNoise
+            startNoise: new OctaveNoise
             (
                 slave: new SimplexNoise(),
                 numOctaves: numOctaves,
                 persistence: valleyPersistence
             ),
-            peakNoise: new OctaveNoise
+            endNoise: new OctaveNoise
             (
                 slave: new RidgeNoise(),
                 numOctaves: numOctaves,
                 persistence: mountainPersistence
-            )
+            ),
+            modulationNoise: new SimplexNoise()
         );
         
         Vector3[] vertices = new Vector3[baseVertices.Count];
