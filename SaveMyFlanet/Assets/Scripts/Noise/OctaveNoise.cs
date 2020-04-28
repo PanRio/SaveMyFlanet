@@ -6,14 +6,14 @@ public class OctaveNoise : Noise
     public readonly int numOctaves;
     public readonly float persistence;
 
-    public OctaveNoise(int numOctaves = 4, float persistence = 0.75f)
+    public OctaveNoise(int numOctaves = 4, float persistence = 0.5f)
     {
         this.slave = new SimplexNoise();
         this.numOctaves = numOctaves;
         this.persistence = persistence;
     }
 
-    public OctaveNoise(Noise slave, int numOctaves = 4, float persistence = 0.75f)
+    public OctaveNoise(Noise slave, int numOctaves = 4, float persistence = 0.5f)
     {
         this.slave = slave;
         this.numOctaves = numOctaves;

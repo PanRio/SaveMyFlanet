@@ -4,18 +4,27 @@ using UnityEngine;
 
 public class NoiseSphere : MonoBehaviour
 {
+    public float scale = 16f;
+
+    public int numOctaves = 4;
+    public float persistence = 0.5f;
+
+    public float valleySwirliness = 0.5f;
+    public float peakSwirliness = 0.5f;
+    public float groundLevel = 0.5f;
     public float border = 0.5f;
 
     private Mesh mesh;
     private List<Vector3> baseVertices;
 
-    void Start()
+    private void Start()
     {
         mesh = GetComponent<MeshFilter>().mesh;
         baseVertices = new List<Vector3>(mesh.vertices);
     }
 
-    void Update()
+    [EasyButtons.Button]
+    void UpdateMesh()
     {
         var noise = new OctaveNoise
         (
@@ -30,7 +39,7 @@ public class NoiseSphere : MonoBehaviour
                         (
                             valueNoise: new SimplexNoise(seed: 1),
                             deltaNoise: new SimplexNoise(seed: 2),
-                            swirliness: 0.5f
+                            swirliness: valleySwirliness
                         )
                     ),
                     scale: 2f
@@ -45,7 +54,7 @@ public class NoiseSphere : MonoBehaviour
                             (
                                 valueNoise: new SimplexNoise(seed: 3),
                                 deltaNoise: new SimplexNoise(seed: 4),
-                                swirliness: 0.5f
+                                swirliness: peakSwirliness
                             )
                         ),
                         scale: 4f
@@ -53,8 +62,8 @@ public class NoiseSphere : MonoBehaviour
                 ),
                 border: border
             ),
-            numOctaves: 4,
-            persistence: 0.75f
+            numOctaves: numOctaves,
+            persistence: persistence
         );
         
         Vector3[] vertices = new Vector3[baseVertices.Count];
@@ -62,9 +71,11 @@ public class NoiseSphere : MonoBehaviour
         for (int i = 0; i < vertices.Length; i++)
         {
             var vertexPos = baseVertices[i];
-            var sampled = noise.Sample(vertexPos);
+            var samplePos = vertexPos * scale;
+            var sampled = noise.Sample(samplePos);
+            var height = sampled * (1f - groundLevel) + groundLevel;
 
-            vertices[i] = vertexPos * sampled;
+            vertices[i] = vertexPos * height;
         }
 
         mesh.vertices = vertices;

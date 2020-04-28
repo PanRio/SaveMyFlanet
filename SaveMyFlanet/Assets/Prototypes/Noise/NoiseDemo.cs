@@ -71,7 +71,7 @@ public class NoiseDemo : MonoBehaviour
                 border: border
             ),
             numOctaves: 4,
-            persistence: 0.75f
+            persistence: 0.5f
         );
         for (var y = 0; y < noiseTex.height; y++)
         {
