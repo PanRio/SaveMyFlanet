@@ -347,10 +347,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   scale: 16
-  numOctaves: 4
-  persistence: 0.5
+  numOctaves: 8
+  valleyPersistence: 0.5
+  mountainPersistence: 0.9
   groundLevel: 0.5
-  border: 0.5
 --- !u!1001 &991083411
 PrefabInstance:
   m_ObjectHideFlags: 0

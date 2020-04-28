@@ -6,13 +6,11 @@ public class NoiseSphere : MonoBehaviour
 {
     public float scale = 16f;
 
-    public int numOctaves = 4;
-    public float persistence = 0.5f;
-
-    public float valleySwirliness = 0.5f;
-    public float peakSwirliness = 0.5f;
+    public int numOctaves = 8;
+    public float valleyPersistence = 0.5f;
+    public float mountainPersistence = 0.9f;
+    
     public float groundLevel = 0.5f;
-    public float border = 0.5f;
 
     private Mesh mesh;
     private List<Vector3> baseVertices;
@@ -26,44 +24,21 @@ public class NoiseSphere : MonoBehaviour
     [EasyButtons.Button]
     void UpdateMesh()
     {
-        var noise = new OctaveNoise
+        var noise = new MountainNoise
         (
-            slave: new MountainNoise
+            decisionNoise: new SimplexNoise(),
+            valleyNoise: new OctaveNoise
             (
-                decisionNoise: new SimplexNoise(seed: 0),
-                valleyNoise: new ScaledNoise
-                (
-                    slave: new RidgeNoise
-                    (
-                        new SwirlNoise
-                        (
-                            valueNoise: new SimplexNoise(seed: 1),
-                            deltaNoise: new SimplexNoise(seed: 2),
-                            swirliness: valleySwirliness
-                        )
-                    ),
-                    scale: 2f
-                ),
-                peakNoise: new InverseNoise
-                (
-                    new ScaledNoise
-                    (
-                        slave: new RidgeNoise
-                        (
-                            new SwirlNoise
-                            (
-                                valueNoise: new SimplexNoise(seed: 3),
-                                deltaNoise: new SimplexNoise(seed: 4),
-                                swirliness: peakSwirliness
-                            )
-                        ),
-                        scale: 4f
-                    )
-                ),
-                border: border
+                slave: new SimplexNoise(),
+                numOctaves: numOctaves,
+                persistence: valleyPersistence
             ),
-            numOctaves: numOctaves,
-            persistence: persistence
+            peakNoise: new OctaveNoise
+            (
+                slave: new RidgeNoise(),
+                numOctaves: numOctaves,
+                persistence: mountainPersistence
+            )
         );
         
         Vector3[] vertices = new Vector3[baseVertices.Count];
