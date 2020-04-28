@@ -27,41 +27,51 @@ public class NoiseDemo : MonoBehaviour
         rend.material.mainTexture = noiseTex;
     }
 
+    void Update()
+    {
+        CalcNoise();
+    }
+
     void CalcNoise()
     {
-        var noise = new MountainNoise
+        var noise = new OctaveNoise
         (
-            decisionNoise: new SimplexNoise(seed: 0),
-            valleyNoise: new ScaledNoise
+            slave: new MountainNoise
             (
-                slave: new RidgeNoise
-                (
-                    new SwirlNoise
-                    (
-                        valueNoise: new SimplexNoise(seed: 1),
-                        deltaNoise: new SimplexNoise(seed: 2),
-                        swirliness: 0.5f
-                    )
-                ),
-                scale: 2f
-            ),
-            peakNoise: new InverseNoise
-            (
-                new ScaledNoise
+                decisionNoise: new SimplexNoise(seed: 0),
+                valleyNoise: new ScaledNoise
                 (
                     slave: new RidgeNoise
                     (
                         new SwirlNoise
                         (
-                            valueNoise: new SimplexNoise(seed: 3),
-                            deltaNoise: new SimplexNoise(seed: 4),
+                            valueNoise: new SimplexNoise(seed: 1),
+                            deltaNoise: new SimplexNoise(seed: 2),
                             swirliness: 0.5f
                         )
                     ),
-                    scale: 4f
-                )
+                    scale: 2f
+                ),
+                peakNoise: new InverseNoise
+                (
+                    new ScaledNoise
+                    (
+                        slave: new RidgeNoise
+                        (
+                            new SwirlNoise
+                            (
+                                valueNoise: new SimplexNoise(seed: 3),
+                                deltaNoise: new SimplexNoise(seed: 4),
+                                swirliness: 0.5f
+                            )
+                        ),
+                        scale: 4f
+                    )
+                ),
+                border: border
             ),
-            border: border
+            numOctaves: 4,
+            persistence: 0.75f
         );
         for (var y = 0; y < noiseTex.height; y++)
         {
@@ -77,10 +87,5 @@ public class NoiseDemo : MonoBehaviour
         // Copy the pixel data to the texture and load it into the GPU.
         noiseTex.SetPixels(pix);
         noiseTex.Apply();
-    }
-
-    void Update()
-    {
-        CalcNoise();
     }
 }
