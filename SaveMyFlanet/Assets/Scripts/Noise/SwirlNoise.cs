@@ -2,15 +2,22 @@
 
 public class SwirlNoise : Noise
 {
-    public readonly SimplexNoise valueNoise;
-    public readonly SimplexNoise deltaNoise;
+    public readonly Noise valueNoise;
+    public readonly Noise deltaNoise;
     public readonly float swirliness;
 
-    public SwirlNoise(float swirliness, int seed)
+    public SwirlNoise(float swirliness)
     {
+        this.valueNoise = new SimplexNoise();
+        this.deltaNoise = new SimplexNoise();
         this.swirliness = swirliness;
-        this.valueNoise = new SimplexNoise(seed);
-        this.deltaNoise = new SimplexNoise(Utils.RandInt(seed) + 1);
+    }
+
+    public SwirlNoise(Noise valueNoise, Noise deltaNoise, float swirliness)
+    {
+        this.valueNoise = valueNoise;
+        this.deltaNoise = deltaNoise;
+        this.swirliness = swirliness;
     }
 
     public override float Sample(Vector3 pos)

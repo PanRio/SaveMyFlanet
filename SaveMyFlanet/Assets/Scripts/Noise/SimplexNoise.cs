@@ -3,22 +3,34 @@ using UnityEngine;
 
 public class SimplexNoise : Noise
 {
+    public SimplexNoise()
+    {
+        Init(Noise.seed);
+    }
+
     public SimplexNoise(int seed)
+    {
+        Init(seed);
+    }
+
+
+    public override float Sample(Vector3 pos)
+    {
+        var sampled = (float)Noise3D(pos.x, pos.y, pos.z);
+        return (sampled + 1f) / 2f;
+    }
+
+
+
+    private void Init(int seed)
     {
         var rng = new System.Random(seed);
         for (int i = 0; i < 256; i++) p[i] = Mathf.FloorToInt(rng.Next(256));
         for (int i = 0; i < 512; i++) perm[i] = p[i & 255];
     }
 
-    private readonly int[] p = new int[256];
-    private readonly int[] perm = new int[512];
-
-
-    public override float Sample(Vector3 pos)
-    {
-        var sampled = (float)Noise(pos.x, pos.y, pos.z);
-        return (sampled + 1f) / 2f;
-    }
+    private int[] p = new int[256];
+    private int[] perm = new int[512];
 
 
 
@@ -27,9 +39,9 @@ public class SimplexNoise : Noise
     /// </summary>
     /// <returns>double</returns>
     /// <param name="x">x coordinate parameter for the noise function.</param>
-    public double Noise(double x)
+    public double Noise1D(double x)
     {
-        return Noise(x, 0);
+        return Noise2D(x, 0);
     }
 
     /// <summary> 
@@ -38,7 +50,7 @@ public class SimplexNoise : Noise
     /// <returns>double</returns>
     /// <param name="x">x coordinate parameter for the noise function.</param>
     /// <param name="y">y coordinate parameter for the noise function.</param>
-    public double Noise(double x, double y)
+    public double Noise2D(double x, double y)
     {
         double n0, n1, n2;
         double F2 = 0.5 * (Math.Sqrt(3.0) - 1.0);
@@ -98,7 +110,7 @@ public class SimplexNoise : Noise
     /// <param name="x">x coordinate parameter for the noise function.</param>
     /// <param name="y">y coordinate parameter for the noise function.</param>
     /// <param name="z">z coordinate parameter for the noise function.</param>
-    public double Noise(double x, double y, double z)
+    public double Noise3D(double x, double y, double z)
     {
         double n0, n1, n2, n3;
 
@@ -185,7 +197,7 @@ public class SimplexNoise : Noise
     /// <param name="y">y coordinate parameter for the noise function.</param>
     /// <param name="z">z coordinate parameter for the noise function.</param>
     /// <param name="w">w coordinate parameter for the noise function.</param>
-    public double Noise(double x, double y, double z, double w)
+    public double Noise4D(double x, double y, double z, double w)
     {
 
         double F4 = (Math.Sqrt(5.0) - 1.0) / 4.0;
@@ -296,8 +308,6 @@ public class SimplexNoise : Noise
         }
         return 27.0 * (n0 + n1 + n2 + n3 + n4);
     }
-
-
 
 
 

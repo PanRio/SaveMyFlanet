@@ -9,8 +9,8 @@ public class NoiseDemo : MonoBehaviour
 
     // The number of cycles of the basic noise pattern that are repeated
     // over the width and height of the texture.
-    public float scale = 16f;
-    public float swirliness = 0.5f;
+    public float scale = 4f;
+    public float border = 0.5f;
 
 
     private Texture2D noiseTex;
@@ -29,7 +29,40 @@ public class NoiseDemo : MonoBehaviour
 
     void CalcNoise()
     {
-        var noise = new SwirlNoise(swirliness, seed: 0);
+        var noise = new MountainNoise
+        (
+            decisionNoise: new SimplexNoise(seed: 0),
+            valleyNoise: new ScaledNoise
+            (
+                slave: new RidgeNoise
+                (
+                    new SwirlNoise
+                    (
+                        valueNoise: new SimplexNoise(seed: 1),
+                        deltaNoise: new SimplexNoise(seed: 2),
+                        swirliness: 0.5f
+                    )
+                ),
+                scale: 2f
+            ),
+            peakNoise: new InverseNoise
+            (
+                new ScaledNoise
+                (
+                    slave: new RidgeNoise
+                    (
+                        new SwirlNoise
+                        (
+                            valueNoise: new SimplexNoise(seed: 3),
+                            deltaNoise: new SimplexNoise(seed: 4),
+                            swirliness: 0.5f
+                        )
+                    ),
+                    scale: 4f
+                )
+            ),
+            border: border
+        );
         for (var y = 0; y < noiseTex.height; y++)
         {
             for (var x = 0;  x < noiseTex.width; x++)
